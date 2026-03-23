@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login with CAPTCHA</title>
+
+    <style>
+
+        /* Fix uneven padding issue */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #dfe9f3, #ffffff);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Login card */
+        .login-box {
+            width: 380px;
+            margin: 80px auto;
+            background: white;
+            padding: 30px; /* Equal padding all sides */
+            border-radius: 12px;
+            box-shadow: 0px 6px 18px rgba(0,0,0,0.15);
+        }
+
+        /* Heading */
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* Labels */
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 12px;
+            margin-bottom: 5px;
+        }
+
+        /* Inputs */
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        /* Input focus effect */
+        input:focus {
+            outline: none;
+            border-color: #0056ff;
+            box-shadow: 0 0 5px rgba(0,86,255,0.3);
+        }
+
+        /* CAPTCHA container */
+        .captcha-container {
+            display: flex;
+            align-items: center;
+            gap: 12px; /* Clean spacing */
+            margin-bottom: 15px;
+        }
+
+        /* CAPTCHA image */
+        #captcha-img {
+            width: 150px;
+            height: 50px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+        }
+
+        /* Refresh button */
+        .refresh-btn {
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(to right, #1e5eff, #003cff);
+            color: white;
+            cursor: pointer;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .refresh-btn:hover {
+            background: linear-gradient(to right, #003cff, #002bb3);
+        }
+
+        /* Login button */
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+
+            background: linear-gradient(to right, #0056ff, #0000cc);
+            color: white;
+
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background: linear-gradient(to right, #003ecb, #000099);
+        }
+
+        /* Message styling */
+        .message {
+            margin-top: 18px;
+            color: red;
+            font-weight: bold;
+            text-align: center;
+            font-size: 16px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="login-box">
+
+        <h2>Login</h2>
+
+        <form method="POST">
+
+            <label>Username:</label>
+            <input type="text" name="username" required>
+
+            <label>Password:</label>
+            <input type="password" name="password" required>
+
+            <!-- CAPTCHA -->
+
+            <div class="captcha-container">
+
+                <img id="captcha-img"
+                     src="{{ url_for('static', filename='captcha.png') }}"
+                     alt="CAPTCHA">
+
+                <button type="button"
+                        class="refresh-btn"
+                        onclick="refreshCaptcha()">
+                    ↻
+                </button>
+
+            </div>
+
+            <!-- CAPTCHA INPUT -->
+
+            <input type="text"
+                   name="captcha"
+                   placeholder="Enter CAPTCHA"
+                   required>
+
+            <!-- LOGIN BUTTON -->
+
+            <button type="submit">
+                Login
+            </button>
+
+        </form>
+
+        <!-- MESSAGE -->
+
+        {% if message %}
+
+            <p class="message">
+                {{ message }}
+            </p>
+
+        {% endif %}
+
+    </div>
+
+    <script>
+
+        function refreshCaptcha() {
+
+            fetch("/refresh_captcha")
+            .then(response => response.text())
+            .then(data => {
+
+                var img = document.getElementById("captcha-img");
+
+                img.src =
+                "/static/captcha.png?" +
+                new Date().getTime();
+
+            });
+
+        }
+
+    </script>
+
+</body>
+
+</html>
